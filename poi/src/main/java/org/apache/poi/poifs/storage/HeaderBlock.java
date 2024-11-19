@@ -392,7 +392,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
    public void writeData(final OutputStream stream) throws IOException {
       // Update the counts and start positions 
       new IntegerField(_bat_count_offset,      _bat_count, _data);
-      new IntegerField(_property_count_offset, _property_count, _data);
+      new IntegerField(_property_count_offset, bigBlockSize.getBigBlockSize() == 512 ? 0 : _property_count, _data);
       new IntegerField(_property_start_offset, _property_start, _data);
       new IntegerField(_sbat_start_offset,     _sbat_start, _data);
       new IntegerField(_sbat_block_count_offset, _sbat_count, _data);

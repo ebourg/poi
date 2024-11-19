@@ -2125,7 +2125,7 @@ final class TestPOIFSStream {
                 // Check the header has the right points in it
                 assertEquals(1, header.getBATCount());
                 assertEquals(1, header.getBATArray()[0]);
-                assertEquals(2, header.getPropertyCount());
+                assertEquals(0, header.getPropertyCount());
                 assertEquals(0, header.getPropertyStart());
                 assertEquals(1, header.getSBATCount());
                 assertEquals(21, header.getSBATStart());
@@ -2236,7 +2236,7 @@ final class TestPOIFSStream {
             // Will have fat then properties stream
             assertEquals(1, hdr.getBATCount());
             assertEquals(1, hdr.getBATArray()[0]);
-            assertEquals(1, hdr.getPropertyCount());
+            assertEquals(0, hdr.getPropertyCount());
             assertEquals(0, hdr.getPropertyStart());
             assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getSBATStart());
             assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getXBATIndex());
@@ -2295,7 +2295,7 @@ final class TestPOIFSStream {
                 assertEquals(1, hdr.getBATCount());
                 assertEquals(1, hdr.getBATArray()[0]);
                 assertEquals(2, hdr.getSBATStart());
-                assertEquals(2, hdr.getPropertyCount());
+                assertEquals(0, hdr.getPropertyCount());
                 assertEquals(0, hdr.getPropertyStart());
                 assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getXBATIndex());
 
@@ -2491,6 +2491,38 @@ final class TestPOIFSStream {
                 assertEquals(3, testDir.getProperty().getStartBlock());
                 assertEquals(64, testDir.getProperty().getSize());
             }
+        }
+    }
+
+    /**
+     * Test that the property count is always 0 when writing files with a block size of 512 bytes.
+     */
+    @Test
+    void testWritePropertyCount512() throws Exception {
+        try (POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"))) {
+            assertEquals(0, fs.getHeaderBlock().getPropertyCount(), "Property count");
+
+            for (int i = 1; i <= 100; i++) {
+                fs.getRoot().createOrUpdateDocument("Entry " + i, new ByteArrayInputStream(new byte[8192]));
+            }
+
+            assertEquals(0, writeOutAndReadBack(fs).getHeaderBlock().getPropertyCount(), "Property count");
+        }
+    }
+
+    /**
+     * Test that the property count is updated when writing files with a block size of 4096 bytes.
+     */
+    @Test
+    void testWritePropertyCount4096() throws Exception {
+        try (POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"))) {
+            assertEquals(0, fs.getHeaderBlock().getPropertyCount(), "Property count");
+
+            for (int i = 1; i <= 100; i++) {
+                fs.getRoot().createOrUpdateDocument("Entry " + i, new ByteArrayInputStream(new byte[8192]));
+            }
+
+            assertEquals(5, writeOutAndReadBack(fs).getHeaderBlock().getPropertyCount(), "Property count");
         }
     }
 
