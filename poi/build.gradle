@@ -69,7 +69,6 @@ task generateVersionJava() {
         String content = fileIn.text
 
         content = content.replace("@VERSION@", version)
-        content = content.replace("@DSTAMP@", new Date().format('yyyyMMdd'))
 
         fileOut.write content
     }

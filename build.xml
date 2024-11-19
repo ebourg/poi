@@ -1563,7 +1563,6 @@ under the License.
         <copy file="${main.version.template}" tofile="${main.version.java}" overwrite="true">
             <filterset>
                 <filter token="VERSION" value="${version.id}"/>
-                <filter token="DSTAMP" value="${DSTAMP}"/>
             </filterset>
         </copy>
 
