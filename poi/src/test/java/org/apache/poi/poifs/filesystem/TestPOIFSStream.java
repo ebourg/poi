@@ -2522,7 +2522,7 @@ final class TestPOIFSStream {
                 fs.getRoot().createOrUpdateDocument("Entry " + i, new ByteArrayInputStream(new byte[8192]));
             }
 
-            assertEquals(5, writeOutAndReadBack(fs).getHeaderBlock().getPropertyCount(), "Property count");
+            assertEquals(4, writeOutAndReadBack(fs).getHeaderBlock().getPropertyCount(), "Property count");
         }
     }
 

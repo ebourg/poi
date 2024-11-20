@@ -121,7 +121,13 @@ public final class PropertyTable implements BATManaged {
      * @param property the new Property to manage
      */
     public void addProperty(Property property) {
-        _properties.add(property);
+        // look for the first empty slot or insert at the end
+        int pos = _properties.indexOf(null);
+        if (pos == -1) {
+            _properties.add(property);
+        } else {
+            _properties.set(pos, property);
+        }
     }
 
     /**
