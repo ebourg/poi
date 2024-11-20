@@ -145,7 +145,7 @@ final class TestPropertyFactory {
 
         for (int j = 0; j < 64; j++) {
             if (isNull[j]) {
-                assertNull(properties.get(j), "Checking property " + j);
+                assertTrue(properties.get(j) instanceof EmptyProperty, "Checking property " + j);
             } else {
                 assertNotNull(properties.get(j), "Checking property " + j);
                 if (isRoot[j]) {

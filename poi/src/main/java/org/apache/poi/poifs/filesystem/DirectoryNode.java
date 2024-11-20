@@ -86,8 +86,11 @@ public class DirectoryNode
             if (child.isDirectory()) {
                 DirectoryProperty childDir = (DirectoryProperty) child;
                 childNode = new DirectoryNode(childDir, _filesystem, this);
-            } else {
+            } else if (child instanceof DocumentProperty) {
                 childNode = new DocumentNode((DocumentProperty) child, this);
+            } else {
+                // empty property
+                continue;
             }
             _entries.add(childNode);
             _byname.put(childNode.getName(), childNode);

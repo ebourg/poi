@@ -64,7 +64,7 @@ final class PropertyFactory {
              break;
 
           default :
-             properties.add(null);
+             properties.add(new EmptyProperty());
              break;
           }
 

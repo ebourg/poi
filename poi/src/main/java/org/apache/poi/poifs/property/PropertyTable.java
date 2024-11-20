@@ -122,12 +122,15 @@ public final class PropertyTable implements BATManaged {
      */
     public void addProperty(Property property) {
         // look for the first empty slot or insert at the end
-        int pos = _properties.indexOf(null);
-        if (pos == -1) {
-            _properties.add(property);
-        } else {
-            _properties.set(pos, property);
+        for (int i = 0; i < _properties.size(); i++) {
+            Property p = _properties.get(i);
+            if (p instanceof EmptyProperty) {
+                _properties.set(i, property);
+                return;
+            }
         }
+
+        _properties.add(property);
     }
 
     /**
@@ -195,18 +198,51 @@ public final class PropertyTable implements BATManaged {
      * Prepare to be written
      */
     public void preWrite() {
+        // remove the blocks containing only empty properties
+        compact();
+
         List<Property> pList = new ArrayList<>();
         // give each property its index
         int i=0;
         for (Property p : _properties) {
-            // only handle non-null properties
-            if (p == null) continue;
             p.setIndex(i++);
             pList.add(p);
         }
 
         // prepare each property for writing
         for (Property p : pList) p.preWrite();
+    }
+
+    /**
+     * Remove the blocks containing only empty properties.
+     */
+    private void compact() {
+        int blockCount = countBlocks();
+        for (int blockIndex = blockCount - 1; blockIndex >= 0; blockIndex--) {
+            if (isBlockEmpty(blockIndex)) {
+                // remove the elements from the list
+                int startIndex = blockIndex * _bigBigBlockSize.getPropertiesPerBlock();
+                for (int i = 0; i < _bigBigBlockSize.getPropertiesPerBlock(); i++) {
+                    if (startIndex >= _properties.size()) {
+                        break;
+                    }
+                    _properties.remove(startIndex);
+                }
+            }
+        }
+    }
+
+    private boolean isBlockEmpty(int blockIndex) {
+        int startIndex = blockIndex * _bigBigBlockSize.getPropertiesPerBlock();
+        for (int i = 0; i < _bigBigBlockSize.getPropertiesPerBlock(); i++) {
+            if (startIndex + i >= _properties.size()) {
+                break;
+            }
+            if (!(_properties.get(startIndex + i) instanceof EmptyProperty)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -217,6 +253,8 @@ public final class PropertyTable implements BATManaged {
        for(Property property : _properties) {
           if(property != null) {
              property.writeData(os);
+          } else {
+             new EmptyProperty().writeData(os);
           }
        }
        os.close();

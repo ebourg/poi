@@ -270,7 +270,7 @@ public class DirectoryProperty extends Property implements Parent, Iterable<Prop
     {
         String name = property.getName();
 
-        if (_children_names.contains(name))
+        if (name != null && _children_names.contains(name))
         {
             throw new IOException("Duplicate name \"" + name + "\"");
         }
