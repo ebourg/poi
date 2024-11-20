@@ -610,6 +610,8 @@ public class DirectoryNode
         return getName();
     }
 
+    /* **********  END  begin implementation of POIFSViewable ********** */
+
     /**
      * Returns an Iterator over all the entries
      */
@@ -627,7 +629,5 @@ public class DirectoryNode
     public Spliterator<Entry> spliterator() {
         return _entries.spliterator();
     }
-
-    /* **********  END  begin implementation of POIFSViewable ********** */
 }   // end public class DirectoryNode
 
