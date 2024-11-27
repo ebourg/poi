@@ -266,10 +266,9 @@ public class POIFSMiniStore extends BlockStore {
         int entriesPerBlock = _filesystem.getBigBlockSizeDetails().getBATEntriesPerBlock();
         for (int sbatIndex = _sbat_blocks.size() - 1; sbatIndex >= 0; sbatIndex--) {
             BATBlock sbat = _sbat_blocks.get(sbatIndex);
-            for (int miniBlockIndex = entriesPerBlock - 1; miniBlockIndex >= 0; miniBlockIndex--) {
-                if (sbat.getValueAt(miniBlockIndex) != POIFSConstants.UNUSED_BLOCK) {
-                    return (sbatIndex * entriesPerBlock) + miniBlockIndex + 1;
-                }
+            int occupiedSize = sbat.getOccupiedSize();
+            if (occupiedSize > 0) {
+                return (sbatIndex * entriesPerBlock) + occupiedSize;
             }
         }
 
